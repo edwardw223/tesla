@@ -175,9 +175,9 @@
   line-height:1.6;
 ">
     💡 启用全屏后，只需点击「继续访问」，即可畅享沉浸式浏览。<br>
-    <!-- 💡 点击「+」号可添加常用网址，系统会自动保存，下次打开仍可使用。<br>
+    💡 点击「+」号可添加常用网址，系统会自动保存，下次打开仍可使用。<br>
     长按自己添加的网址按钮，可进行编辑或删除操作。<br>
-    点击[批量删除]，可快速删除自定义网址。 -->
+    点击[批量删除]，可快速删除自定义网址。
 </p>
 
 <p id="safeNote" style="
@@ -290,28 +290,28 @@ function renderLinks() {
   });
 
   // ✅ 添加 + 号按钮
-  // const addBtn = document.createElement("div");
-  // addBtn.textContent = "+";
-  // addBtn.className = "add-btn";
-  // addBtn.addEventListener("click", () => openModal("add"));
-  // navLinks.appendChild(addBtn);
+  const addBtn = document.createElement("div");
+  addBtn.textContent = "+";
+  addBtn.className = "add-btn";
+  addBtn.addEventListener("click", () => openModal("add"));
+  navLinks.appendChild(addBtn);
 
   // ✅ 添加批量删除 / 保存按钮
-  // const deleteToggleBtn = document.createElement("div");
-  // deleteToggleBtn.textContent = batchDeleteMode ? "💾 保存" : "🗑 批量删除";
-  // deleteToggleBtn.className = "add-btn";
-  // deleteToggleBtn.style.background = batchDeleteMode
-  //   ? "rgba(0,255,128,0.25)"
-  //   : "rgba(255,64,64,0.25)";
-  // deleteToggleBtn.style.borderColor = batchDeleteMode ? "#00ff99" : "#ff4444";
-  // deleteToggleBtn.style.color = batchDeleteMode ? "#00ff99" : "#ff6666";
+  const deleteToggleBtn = document.createElement("div");
+  deleteToggleBtn.textContent = batchDeleteMode ? "💾 保存" : "🗑 批量删除";
+  deleteToggleBtn.className = "add-btn";
+  deleteToggleBtn.style.background = batchDeleteMode
+    ? "rgba(0,255,128,0.25)"
+    : "rgba(255,64,64,0.25)";
+  deleteToggleBtn.style.borderColor = batchDeleteMode ? "#00ff99" : "#ff4444";
+  deleteToggleBtn.style.color = batchDeleteMode ? "#00ff99" : "#ff6666";
 
-  // deleteToggleBtn.addEventListener("click", () => {
-  //   batchDeleteMode = !batchDeleteMode; // ✅ 切换状态
-  //   renderLinks();
-  // });
+  deleteToggleBtn.addEventListener("click", () => {
+    batchDeleteMode = !batchDeleteMode; // ✅ 切换状态
+    renderLinks();
+  });
 
-  // navLinks.appendChild(deleteToggleBtn);
+  navLinks.appendChild(deleteToggleBtn);
 }
 
 
