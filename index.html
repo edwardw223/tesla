@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesla WebHub</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 30px;
+  }
+  #adBanner {
+    width: 1080px;
+    max-width: 95%;
+    height: 180px;
+    background: transparent;
+    border: none;   
+    border-radius: 12px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .nav-links {
+  display: flex;
+  flex-wrap: wrap;            /* ✅ 超出宽度自动换行 */
+  justify-content: center;    /* ✅ 居中排列 */
+  align-items: center;
+  gap: 18px 26px;             /* ✅ 按钮间距 */
+  max-width: 1080px;          /* ✅ 与广告图对齐 */
+  margin: 0 auto 50px auto;   /* ✅ 居中 + 底部留白 */
+  padding: 0 10px;
+  box-sizing: border-box;
+  }
+  .nav-links a, .add-btn {
+    padding: 12px 26px;
+    background: rgba(0, 191, 255, 0.15);
+    border: 1px solid #00bfff;
+    border-radius: 50px;
+    color: #00bfff;
+    text-decoration: none;
+    transition: 0.3s;
+    cursor: pointer;
+    font-size: 1.1rem;
+  }
+  .nav-links a:hover, .add-btn:hover {
+    background: #00bfff;
+    color: #000;
+    box-shadow: 0 0 15px #00bfff;
+  }
+  .url-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  #urlInput {
+    width: 600px;
+    padding: 15px;
+    border-radius: 30px 0 0 30px;
+    border: 1px solid #00bfff;
+    outline: none;
+    background: #111;
+    color: #fff;
+    font-size: 1rem;
+  }
+  #goButton {
+    padding: 15px 28px;
+    border-radius: 0 30px 30px 0;
+    border: 1px solid #00bfff;
+    background: #00bfff;
+    color: #000;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  #fullscreenLink {
+    margin-top: 45px;
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: #00bfff;
+    text-shadow: 0 0 10px #00bfff, 0 0 25px #00bfff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+    animation: pulse 1.6s infinite alternate;
+  }
+  #fullscreenLink:hover {
+    color: #00d4ff;
+    text-shadow: 0 0 15px #00d4ff, 0 0 35px #00d4ff;
+  }
+  @keyframes pulse {
+    from { opacity: 0.8; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1.03); }
+  }
+  /* 弹窗 */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  .modal-content {
+    background: #111;
+    border: 1px solid #00bfff;
+    border-radius: 12px;
+    padding: 20px 25px;
+    color: #fff;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 0 20px #00bfff;
+  }
+  .modal-content input {
+    width: 90%;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #00bfff;
+    background: #000;
+    color: #fff;
+  }
+  .modal-buttons button {
+    margin: 6px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .save-btn { background: #00bfff; color: #000; }
+  .delete-btn { background: #ff4444; color: #fff; }
+  .cancel-btn { background: #333; color: #fff; }
+</style>
+</head>
+<body>
+
+<div id="adBanner">
+  <a href="https://0086.ie" target="_blank">
+    <img src="ad.jpg" alt="广告图" style="max-width:100%; max-height:100%; border-radius:12px;">
+  </a>
+</div>
+
+<div class="nav-links" id="navLinks"></div>
+
+<div class="url-box">
+  <input id="urlInput" type="text"
+         placeholder="先点击下方全屏模式，在此输入任意网址即可保持全屏浏览">
+  <button id="goButton">进入</button>
+</div>
+
+<a id="fullscreenLink">👉 点击这里进入全屏模式</a>
+
+</div>
+
+<p id="tipText" style="
+  color:#00bfff;
+  text-shadow:0 0 8px #00bfff, 0 0 16px #0099cc;
+  font-size:2rem;
+  text-align:center;
+  margin-top:50px;
+  margin-bottom:20px;
+  line-height:1.6;
+">
+    💡 启用全屏后，只需点击「继续访问」，即可畅享沉浸式浏览。<br><br>
+    💡 点击「+」号可添加常用网址，系统会自动保存，下次打开仍可使用。<br>
+    长按自己添加的网址按钮，可进行编辑或删除操作。<br>
+    点击[批量删除]，可快速删除自定义网址。
+</p>
+
+<p id="safeNote" style="
+  color: #ff3b3b;
+  text-shadow: 0 0 8px #ff3b3b;
+  font-size:2rem;
+  text-align:center;
+  margin-top:20px;
+  opacity:0.9;
+">
+  ⚠️ 为确保行车安全，请仅在车辆驻车、且环境安全时使用本站。
+</p>
+
+
+
+
+<!-- 编辑弹窗 -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3 id="modalTitle">添加网站</h3>
+    <input id="modalName" type="text" placeholder="网站名称">
+    <input id="modalUrl" type="text" placeholder="网址，如 https://www.example.com">
+    <div class="modal-buttons">
+      <button class="save-btn" id="saveBtn">保存</button>
+      <button class="delete-btn" id="deleteBtn">删除</button>
+      <button class="cancel-btn" id="cancelBtn">取消</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const defaultLinks = [
+    { name: "YouTube", url: "https://www.youtube.com" },
+    { name: "抖音", url: "https://www.douyin.com/" },
+    { name: "小红书", url: "https://www.xiaohongshu.com" },
+    { name: "爱尔兰新闻", url: "https://news.eiresino.com" },
+    { name: "0086.ie", url: "https://0086.ie" },
+    { name: "0086353.xyz", url: "https://0086353.xyz" }
+  ];
+
+  const navLinks = document.getElementById("navLinks");
+  const urlInput = document.getElementById("urlInput");
+  const goButton = document.getElementById("goButton");
+  const fullscreenLink = document.getElementById("fullscreenLink");
+  const modal = document.getElementById("modal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalName = document.getElementById("modalName");
+  const modalUrl = document.getElementById("modalUrl");
+  const saveBtn = document.getElementById("saveBtn");
+  const deleteBtn = document.getElementById("deleteBtn");
+  const cancelBtn = document.getElementById("cancelBtn");
+
+  let editingIndex = null;
+
+  let batchDeleteMode = false; // ✅ 是否处于批量删除模式
+
+function renderLinks() {
+  const saved = JSON.parse(localStorage.getItem("customLinks") || "[]");
+  const links = [...defaultLinks, ...saved];
+  navLinks.innerHTML = "";
+
+  links.forEach((l, i) => {
+    const a = document.createElement("a");
+    a.textContent = l.name;
+    a.href = l.url;
+    a.target = "_blank";
+    a.style.position = "relative";
+
+    // ✅ 自定义网址（默认网址不显示 ❌）
+    if (i >= defaultLinks.length) {
+      let timer;
+      a.addEventListener("mousedown", () => {
+        timer = setTimeout(() => openModal("edit", i - defaultLinks.length, l), 800);
+      });
+      a.addEventListener("mouseup", () => clearTimeout(timer));
+      a.addEventListener("mouseleave", () => clearTimeout(timer));
+
+      // ✅ 批量删除模式下添加 ❌ 按钮
+      if (batchDeleteMode) {
+        const delBtn = document.createElement("span");
+        delBtn.textContent = "✕";
+        delBtn.style.cssText = `
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          background: rgba(255,0,0,0.9);
+          color: #fff;
+          border-radius: 50%;
+          width: 22px;
+          height: 22px;
+          font-size: 0.8rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 10;
+        `;
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();   // ✅ 阻止事件冒泡
+          e.preventDefault();    // ✅ 阻止跳转链接
+          saved.splice(i - defaultLinks.length, 1);
+          localStorage.setItem("customLinks", JSON.stringify(saved));
+          renderLinks();         // ✅ 重新渲染界面
+        });
+        a.appendChild(delBtn);
+      }
+    }
+
+    navLinks.appendChild(a);
+  });
+
+  // ✅ 添加 + 号按钮
+  const addBtn = document.createElement("div");
+  addBtn.textContent = "+";
+  addBtn.className = "add-btn";
+  addBtn.addEventListener("click", () => openModal("add"));
+  navLinks.appendChild(addBtn);
+
+  // ✅ 添加批量删除 / 保存按钮
+  const deleteToggleBtn = document.createElement("div");
+  deleteToggleBtn.textContent = batchDeleteMode ? "💾 保存" : "🗑 批量删除";
+  deleteToggleBtn.className = "add-btn";
+  deleteToggleBtn.style.background = batchDeleteMode
+    ? "rgba(0,255,128,0.25)"
+    : "rgba(255,64,64,0.25)";
+  deleteToggleBtn.style.borderColor = batchDeleteMode ? "#00ff99" : "#ff4444";
+  deleteToggleBtn.style.color = batchDeleteMode ? "#00ff99" : "#ff6666";
+
+  deleteToggleBtn.addEventListener("click", () => {
+    batchDeleteMode = !batchDeleteMode; // ✅ 切换状态
+    renderLinks();
+  });
+
+  navLinks.appendChild(deleteToggleBtn);
+}
+
+
+  function openModal(mode, index = null, data = {}) {
+    modal.style.display = "flex";
+    if (mode === "add") {
+      modalTitle.textContent = "添加网站";
+      modalName.value = "";
+      modalUrl.value = "";
+      deleteBtn.style.display = "none";
+      editingIndex = null;
+    } else {
+      modalTitle.textContent = "编辑网站";
+      modalName.value = data.name;
+      modalUrl.value = data.url;
+      deleteBtn.style.display = "inline-block";
+      editingIndex = index;
+    }
+  }
+
+  function closeModal() { modal.style.display = "none"; }
+
+  saveBtn.onclick = () => {
+  const name = modalName.value.trim();
+  let url = modalUrl.value.trim();
+  if (!name || !url) return alert("请输入名称和网址");
+  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+
+  const saved = JSON.parse(localStorage.getItem("customLinks") || "[]");
+
+  // ✅ 限制最多 30 个自定义网址
+  if (editingIndex === null && saved.length >= 30) {
+    alert("您已达到自定义网址的上限（30个），请删除部分再添加。");
+    return;
+  }
+
+  if (editingIndex === null) saved.push({ name, url });
+  else saved[editingIndex] = { name, url };
+
+  localStorage.setItem("customLinks", JSON.stringify(saved));
+  closeModal();
+  renderLinks();
+  };
+
+  deleteBtn.onclick = () => {
+    const saved = JSON.parse(localStorage.getItem("customLinks") || "[]");
+    saved.splice(editingIndex, 1);
+    localStorage.setItem("customLinks", JSON.stringify(saved));
+    closeModal(); renderLinks();
+  };
+
+  cancelBtn.onclick = closeModal;
+
+  goButton.addEventListener("click", () => {
+    let url = urlInput.value.trim();
+    if (!url) return;
+    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+    window.open(url, "_blank");
+  });
+
+  fullscreenLink.addEventListener("click", () => {
+    let url = urlInput.value.trim();
+    if (!url) url = "https://0086.ie";
+    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+    const redirectUrl = "https://www.youtube.com/redirect?q=" + encodeURIComponent(url);
+    window.location.href = redirectUrl;
+  });
+
+  renderLinks();
+</script>
+
+
+<!-- 🌊 霓虹波浪底部 -->
+<div class="neon-ocean">
+    <svg viewBox="0 0 1440 320" class="wave-layer">
+        <path
+        fill="rgba(0,191,255,0.3)"
+        d="M0,160 C480,240 960,80 1440,160 L1440,320 L0,320 Z">
+        <animate
+          attributeName="d"
+          dur="10s"
+          begin="0s"
+          repeatCount="indefinite"
+          values="
+            M0,160 C480,240 960,80 1440,160 L1440,320 L0,320 Z;
+            M0,180 C480,120 960,200 1440,100 L1440,320 L0,320 Z;
+            M0,140 C480,200 960,120 1440,180 L1440,320 L0,320 Z;
+            M0,160 C480,240 960,80 1440,160 L1440,320 L0,320 Z
+          " />
+      </path>
+      
+      <path
+        fill="rgba(0,191,255,0.5)"
+        d="M0,160 C480,260 960,100 1440,200 L1440,320 L0,320 Z">
+        <animate
+          attributeName="d"
+          dur="12s"       
+          begin="-2s"     
+          repeatCount="indefinite"
+          values="
+            M0,160 C480,260 960,100 1440,200 L1440,320 L0,320 Z;
+            M0,180 C480,180 960,240 1440,140 L1440,320 L0,320 Z;
+            M0,140 C480,220 960,160 1440,220 L1440,320 L0,320 Z;
+            M0,160 C480,260 960,100 1440,200 L1440,320 L0,320 Z
+          " />
+      </path>
+      
+      <path
+        fill="rgba(0,191,255,0.8)"
+        d="M0,180 C480,300 960,160 1440,260 L1440,320 L0,320 Z">
+        <animate
+          attributeName="d"
+          dur="9s"        
+          begin="-4s"    
+          repeatCount="indefinite"
+          values="
+            M0,180 C480,300 960,160 1440,260 L1440,320 L0,320 Z;
+            M0,200 C480,200 960,260 1440,180 L1440,320 L0,320 Z;
+            M0,160 C480,260 960,200 1440,240 L1440,320 L0,320 Z;
+            M0,180 C480,300 960,160 1440,260 L1440,320 L0,320 Z
+          " />
+      </path>
+    </svg>
+  </div>
+  
+  <style>
+  .neon-ocean {
+    position: fixed;
+    bottom: -50px;
+    left: 0;
+    width: 100%;
+    height: 35vh; /* 高度自适应 */
+    background: transparent;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  .wave-layer {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 10px #00bfff)
+            drop-shadow(0 0 30px #0099cc)
+            drop-shadow(0 0 50px #00ccff);
+  }
+  </style>
+  <!-- 🌊 霓虹波浪结束 -->
+  
+
+</body>
+</html>
