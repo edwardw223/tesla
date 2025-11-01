@@ -1,43 +1,52 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-      <script>
-        // 🚫 检测是否为手机或竖屏访问
-        const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-      
-        if (isMobile || isPortrait) {
-          // 如果是手机或竖屏设备 → 清空页面内容，输出提示
-          document.open();
-          document.write(`
-            <style>
-              body {
-                background-color: black;
-                color: #00bfff;
-                text-align: center;
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 80px 20px;
-              }
-              h1 {
-                font-size: 1.8rem;
-                color: #00bfff;
-                text-shadow: 0 0 10px #00bfff, 0 0 20px #0099cc;
-              }
-              p {
-                color: #ccc;
-                font-size: 1rem;
-                margin-top: 20px;
-                line-height: 1.6;
-              }
-            </style>
-            <h1>📱 本站仅支持特斯拉车载浏览器</h1>
-            <p>请在特斯拉中控屏浏览器访问以获得最佳体验。</p>
-          `);
-          document.close();
-          throw new Error("Blocked mobile access."); // 中断后续 JS 执行
-        }
-      </script>
+<script>
+  (function() {
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+
+    if (isMobile || isPortrait) {
+      // 立即停止页面解析
+      document.write(`
+        <style>
+          * { display: none !important; }
+          html, body {
+            display: block !important;
+            background-color: black;
+            color: #00bfff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 80px 20px;
+          }
+          h1 {
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px #00bfff, 0 0 20px #0099cc;
+          }
+          p {
+            color: #ccc;
+            font-size: 1rem;
+            margin-top: 20px;
+            line-height: 1.6;
+          }
+        </style>
+        <h1>📱 本站仅支持特斯拉车载浏览器</h1>
+        <p>请在特斯拉中控屏全屏模式访问以获得最佳体验。</p>
+      `);
+
+      // 强制清空已有内容（彻底）
+      try {
+        document.body.innerHTML = "";
+        document.documentElement.innerHTML = "";
+      } catch (e) {}
+
+      // 阻止后续脚本执行
+      window.stop();
+      throw new Error("Blocked mobile access.");
+    }
+  })();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tesla WebHub</title>
@@ -494,4 +503,5 @@ function renderLinks() {
 
 </body>
 </html>
+
 
