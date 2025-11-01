@@ -1,54 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<script>
-(function() {
-  const ua = navigator.userAgent;
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-  const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-
-  if (isMobile || isPortrait) {
-    // 先输出提示
-    document.write(`
-      <style>
-        html, body {
-          margin: 0;
-          padding: 0;
-          background-color: black;
-          color: #00bfff;
-          font-family: Arial, sans-serif;
-          text-align: center;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-        h1 {
-          font-size: 1.8rem;
-          text-shadow: 0 0 10px #00bfff, 0 0 20px #0099cc;
-        }
-        p {
-          color: #ccc;
-          font-size: 1rem;
-          margin-top: 20px;
-          line-height: 1.6;
-        }
-      </style>
-      <h1>📱 本站仅支持特斯拉车载浏览器</h1>
-      <p>请在特斯拉中控屏全屏模式访问以获得最佳体验。</p>
-    `);
-
-    // 延迟终止加载，确保提示保留
-    setTimeout(() => {
-      window.stop();
-    }, 50);
-
-    throw new Error("Blocked mobile access");
-  }
-})();
-</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tesla WebHub</title>
@@ -505,6 +457,7 @@ function renderLinks() {
 
 </body>
 </html>
+
 
 
 
