@@ -138,6 +138,43 @@
   .delete-btn { background: #ff4444; color: #fff; }
   .cancel-btn { background: #333; color: #fff; }
 </style>
+
+<script>
+  // 🚫 拦截手机或竖屏访问
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+
+  if (isMobile || isPortrait) {
+    document.write(`
+      <style>
+        body {
+          background-color: black;
+          color: #00bfff;
+          text-align: center;
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 60px;
+        }
+        h1 {
+          font-size: 1.8rem;
+          color: #00bfff;
+          text-shadow: 0 0 10px #00bfff, 0 0 20px #0099cc;
+        }
+        p {
+          color: #ccc;
+          font-size: 1rem;
+          margin-top: 20px;
+        }
+      </style>
+      <h1>📱 本站仅支持特斯拉车载浏览器</h1>
+      <p>请在特斯拉中控屏浏览器访问以获得最佳体验。</p>
+    `);
+    document.close();
+  }
+</script>
+
+
+  
 </head>
 <body>
 
@@ -457,3 +494,4 @@ function renderLinks() {
 
 </body>
 </html>
+
