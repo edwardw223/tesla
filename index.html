@@ -373,7 +373,7 @@ function renderLinks() {
 
   fullscreenLink.addEventListener("click", () => {
     let url = urlInput.value.trim();
-    if (!url) url = "https://0086.ie";
+    if (!url) url = "https://tesla.0086.ie/";
     if (!/^https?:\/\//i.test(url)) url = "https://" + url;
     const redirectUrl = "https://www.youtube.com/redirect?q=" + encodeURIComponent(url);
     window.location.href = redirectUrl;
@@ -462,6 +462,7 @@ function renderLinks() {
 
 </body>
 </html>
+
 
 
 
