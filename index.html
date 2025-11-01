@@ -176,8 +176,8 @@
 ">
     💡 启用全屏后，只需点击「继续访问」，即可畅享沉浸式浏览。<br>
     💡 点击「+」号可添加常用网址，系统会自动保存，下次打开仍可使用。<br>
-    长按自己添加的网址按钮，可进行编辑或删除操作。<br>
-    点击[批量删除]，可快速删除自定义网址。
+       点击[批量删除]，可快速删除自定义网址。<br>
+
 </p>
 
 <p id="safeNote" style="
@@ -209,6 +209,36 @@
 </div>
 
 <script>
+
+  function loadLinksFromURLParamAndSave(retry = 0) {
+    const params = new URLSearchParams(window.location.search);
+    const linksParam = params.get("links");
+    if (!linksParam) {
+      if (retry < 20) {
+        // Tesla 会延迟赋值 search，延迟重试
+        setTimeout(() => loadLinksFromURLParamAndSave(retry + 1), 250);
+      }
+      return;
+    }
+    try {
+      const parsed = JSON.parse(decodeURIComponent(linksParam));
+      if (Array.isArray(parsed)) {
+        localStorage.setItem("customLinks", JSON.stringify(parsed));
+        // 清理 URL 参数，避免重复
+        params.delete("links");
+        const newUrl = window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+        history.replaceState(null, "", newUrl);
+        console.log("✅ Tesla 全屏同步成功", parsed);
+      }
+    } catch (e) {
+      console.warn("解析 links 参数失败:", e);
+    }
+  }
+
+// ⚡ 在脚本开头立即执行
+loadLinksFromURLParamAndSave();
+
+
   const defaultLinks = [
     { name: "YouTube", url: "https://www.youtube.com" },
     { name: "抖音", url: "https://www.douyin.com/" },
@@ -248,12 +278,12 @@ function renderLinks() {
 
     // ✅ 自定义网址（默认网址不显示 ❌）
     if (i >= defaultLinks.length) {
-      let timer;
-      a.addEventListener("mousedown", () => {
-        timer = setTimeout(() => openModal("edit", i - defaultLinks.length, l), 800);
-      });
-      a.addEventListener("mouseup", () => clearTimeout(timer));
-      a.addEventListener("mouseleave", () => clearTimeout(timer));
+      // let timer;
+      // a.addEventListener("mousedown", () => {
+      //   timer = setTimeout(() => openModal("edit", i - defaultLinks.length, l), 800);
+      // });
+      // a.addEventListener("mouseup", () => clearTimeout(timer));
+      // a.addEventListener("mouseleave", () => clearTimeout(timer));
 
       // ✅ 批量删除模式下添加 ❌ 按钮
       if (batchDeleteMode) {
@@ -373,12 +403,25 @@ function renderLinks() {
   });
 
   fullscreenLink.addEventListener("click", () => {
-    let url = urlInput.value.trim();
-    if (!url) url = "https://tesla.0086.ie/";
-    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-    const redirectUrl = "https://www.youtube.com/redirect?q=" + encodeURIComponent(url);
-    window.location.href = redirectUrl;
+  // 1️⃣ 目标网址（用户输入或默认）
+  let target = urlInput.value.trim() || "https://tesla.0086.ie/";
+  if (!/^https?:\/\//i.test(target)) target = "https://" + target;
+
+  // 2️⃣ 读取当前保存的自定义网址
+  const saved = JSON.parse(localStorage.getItem("customLinks") || "[]");
+
+  // 3️⃣ 编码保存的数据（避免特殊字符）
+  const encodedLinks = encodeURIComponent(JSON.stringify(saved));
+
+  // 4️⃣ 把数据作为 ?links= 参数附加到目标网址
+  const sep = target.includes("?") ? "&" : "?";
+  const targetWithLinks = target + sep + "links=" + encodedLinks;
+
+  // 5️⃣ 用 Tesla 认可的跳转方式进入全屏
+  const redirectUrl = "https://www.youtube.com/redirect?q=" + encodeURIComponent(targetWithLinks);
+  window.location.href = redirectUrl;
   });
+
 
   renderLinks();
 </script>
