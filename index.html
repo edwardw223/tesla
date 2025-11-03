@@ -239,14 +239,26 @@
 loadLinksFromURLParamAndSave();
 
 
-  const defaultLinks = [
-    { name: "YouTube", url: "https://www.youtube.com" },
-    { name: "抖音", url: "https://www.douyin.com/" },
-    { name: "小红书", url: "https://www.xiaohongshu.com" },
-    { name: "爱尔兰新闻", url: "https://news.eiresino.com" },
-    { name: "0086.ie", url: "https://0086.ie" },
-    { name: "0086353.xyz", url: "https://0086353.xyz" }
-  ];
+  // ✅ 默认站点分类结构
+const defaultLinks = [
+  // 自己的站点（优先展示）
+  // { name: "0086.ie", url: "https://0086.ie" },
+  // { name: "0086353.xyz", url: "https://0086353.xyz" },
+  // { name: "爱尔兰新闻", url: "https://news.eiresino.com" },
+
+  // 视频娱乐区
+  // { name: "YouTube", url: "https://www.youtube.com" },
+  { name: "抖音", url: "https://www.douyin.com/" },
+  { name: "小红书", url: "https://www.xiaohongshu.com" },
+
+  // 趣味互动区
+  { name: "流体光影", url: "https://paveldogreat.github.io/WebGL-Fluid-Simulation/" },
+  { name: "水波互动", url: "https://madebyevan.com/webgl-water/" },
+  { name: "沙子绘画", url: "https://thisissand.com" },
+  { name: "环境音混音器", url: "https://asoftmurmur.com/" },
+  { name: "全球风场", url: "https://www.windy.com/" }
+];
+
 
   const navLinks = document.getElementById("navLinks");
   const urlInput = document.getElementById("urlInput");
