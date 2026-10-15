@@ -634,7 +634,7 @@ function renderLinks() {
   }
   .neon-ocean {
     position: fixed;
-    bottom: -60px;
+    bottom: 0;
     left: 0;
     width: 100%;
     height: 22vh; /* 只留底部装饰，别顶到最下面的提示文字 */
@@ -644,9 +644,13 @@ function renderLinks() {
     pointer-events: none;
   }
   
+  /* ✅ 按宽度铺满左右（height:auto），多余的上半部分由容器裁掉 */
   .wave-layer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
     filter: drop-shadow(0 0 10px #00bfff)
             drop-shadow(0 0 30px #0099cc)
             drop-shadow(0 0 50px #00ccff);
