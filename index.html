@@ -60,6 +60,33 @@
     color: #000;
     box-shadow: 0 0 15px #00bfff;
   }
+  /* ✅ 站点分类标题（占满一行，自动换行分组） */
+  .nav-group {
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 6px 0 -4px 0;
+    color: #5fd8ff;
+    font-size: 0.95rem;
+    letter-spacing: 3px;
+    text-shadow: 0 0 8px rgba(0, 191, 255, 0.6);
+  }
+  /* ✅ 换行占位：让管理按钮单独一行 */
+  .nav-break {
+    flex: 0 0 100%;
+    height: 0;
+  }
+  .nav-group::before,
+  .nav-group::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg,
+      rgba(0, 191, 255, 0),
+      rgba(0, 191, 255, 0.55),
+      rgba(0, 191, 255, 0));
+  }
   .url-box {
     display: flex;
     justify-content: center;
@@ -254,17 +281,25 @@ loadLinksFromURLParamAndSave();
 
   // ✅ 默认站点分类结构
 const defaultLinks = [
-  // 自己的站点（优先展示）
-  { name: "爱尔兰网址导航", url: "https://0086.ie" },
+  // ✅ 我的站点：地图 + 网址导航（默认网址，不可删除）
+  { group: "我的站点" },
+  { name: "华人地图", url: "https://map.0086.ie" },
+  { name: "房源地图", url: "https://property.0086.ie" },
+  { name: "学校地图", url: "https://school.0086.ie" },
+  { name: "旅行地图", url: "https://travel.0086.ie" },
+  { name: "巴士地图", url: "https://bus.0086.ie" },
+  { name: "网址导航", url: "https://0086.ie" },
   // { name: "0086353.xyz", url: "https://0086353.xyz" },
   // { name: "爱尔兰新闻", url: "https://news.eiresino.com" },
 
   // 视频娱乐区
+  { group: "视频娱乐" },
   // { name: "YouTube", url: "https://www.youtube.com" },
   { name: "抖音", url: "https://www.douyin.com/" },
   { name: "小红书", url: "https://www.xiaohongshu.com" },
 
   // 趣味互动区
+  { group: "趣味互动" },
   { name: "流体光影", url: "https://paveldogreat.github.io/WebGL-Fluid-Simulation/" },
   { name: "水波互动", url: "https://madebyevan.com/webgl-water/" },
   { name: "沙子绘画", url: "https://thisissand.com" },
@@ -320,6 +355,15 @@ function renderLinks() {
   navLinks.innerHTML = "";
 
   links.forEach((l, i) => {
+    // ✅ 分组标题：占满一整行，把上下分成两个分类
+    if (l.group) {
+      const groupEl = document.createElement("div");
+      groupEl.className = "nav-group";
+      groupEl.textContent = l.group;
+      navLinks.appendChild(groupEl);
+      return;
+    }
+
     const a = document.createElement("a");
     a.textContent = l.name;
     a.href = l.url;
@@ -399,6 +443,11 @@ function renderLinks() {
 
     navLinks.appendChild(a);
   });
+
+  // ✅ 让「+ / 批量删除」单独起一行，不和上面的分类混在一起
+  const breakEl = document.createElement("div");
+  breakEl.className = "nav-break";
+  navLinks.appendChild(breakEl);
 
   // ✅ 添加 + 号按钮
   const addBtn = document.createElement("div");
