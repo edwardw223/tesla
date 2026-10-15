@@ -574,7 +574,7 @@ function renderLinks() {
 
 <!-- 🌊 霓虹波浪底部 -->
 <div class="neon-ocean">
-    <svg viewBox="0 0 1440 320" class="wave-layer">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none" class="wave-layer">
         <path
         fill="rgba(0,191,255,0.3)"
         d="M0,160 C480,240 960,80 1440,160 L1440,320 L0,320 Z">
@@ -634,23 +634,19 @@ function renderLinks() {
   }
   .neon-ocean {
     position: fixed;
-    bottom: 0;
+    bottom: -50px;
     left: 0;
     width: 100%;
-    height: 15vh; /* 只留底部装饰光带，不顶到最下面的提示文字 */
+    height: 35vh; /* 高度自适应 */
     background: transparent;
     overflow: hidden;
     z-index: 0;
     pointer-events: none;
   }
   
-  /* ✅ 按宽度铺满左右（height:auto），多余的上半部分由容器裁掉 */
   .wave-layer {
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     filter: drop-shadow(0 0 10px #00bfff)
             drop-shadow(0 0 30px #0099cc)
             drop-shadow(0 0 50px #00ccff);
