@@ -622,6 +622,26 @@ function renderLinks() {
             M0,180 C480,300 960,160 1440,260 L1440,320 L0,320 Z
           " />
       </path>
+
+      <!-- ✅ 第一层的浪尖描边：只描最上面那条曲线（不含平底），让第一层的边缘和第二层一样清楚；动画与第一层完全同步 -->
+      <path
+        fill="none"
+        stroke="rgba(122, 226, 255, 0.55)"
+        stroke-width="2"
+        stroke-linecap="round"
+        d="M0,160 C480,240 960,80 1440,160">
+        <animate
+          attributeName="d"
+          dur="10s"
+          begin="0s"
+          repeatCount="indefinite"
+          values="
+            M0,160 C480,240 960,80 1440,160;
+            M0,180 C480,120 960,200 1440,100;
+            M0,140 C480,200 960,120 1440,180;
+            M0,160 C480,240 960,80 1440,160
+          " />
+      </path>
     </svg>
   </div>
   
