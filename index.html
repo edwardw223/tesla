@@ -26,7 +26,7 @@
   #adBanner {
     width: 1080px;
     max-width: 95%;
-    height: min(96px, 10vh);
+    height: min(170px, 18vh);
     background: transparent;
     border: none;   
     border-radius: 12px;
@@ -40,14 +40,14 @@
   flex-wrap: wrap;            /* ✅ 超出宽度自动换行 */
   justify-content: center;    /* ✅ 居中排列 */
   align-items: center;
-  gap: clamp(7px, 1.2vh, 13px) clamp(9px, 1.3vw, 18px);   /* ✅ 按钮间距 */
+  gap: clamp(10px, 1.6vh, 18px) clamp(12px, 1.6vw, 24px);   /* ✅ 按钮间距 */
   max-width: 1080px;          /* ✅ 与广告图对齐 */
-  margin: 0 auto clamp(12px, 2.2vh, 28px) auto;   /* ✅ 居中 + 底部留白 */
+  margin: 0 auto clamp(16px, 3vh, 40px) auto;   /* ✅ 居中 + 底部留白 */
   padding: 0 10px;
   box-sizing: border-box;
   }
   .nav-links a, .add-btn {
-    padding: clamp(6px, 1.1vh, 10px) clamp(13px, 1.5vw, 20px);
+    padding: clamp(7px, 1.3vh, 12px) clamp(16px, 1.8vw, 26px);
     background: rgba(0, 191, 255, 0.15);
     border: 1px solid #00bfff;
     border-radius: 50px;
@@ -55,7 +55,7 @@
     text-decoration: none;
     transition: 0.3s;
     cursor: pointer;
-    font-size: clamp(0.8rem, 1.7vh, 1rem);
+    font-size: clamp(0.9rem, 2vh, 1.15rem);
   }
   .nav-links a:hover, .add-btn:hover {
     background: #00bfff;
@@ -95,35 +95,35 @@
     margin: clamp(8px, 1.4vh, 20px) 0 clamp(8px, 1.2vh, 16px);
   }
   #urlInput {
-    width: min(520px, 52vw);
-    padding: clamp(7px, 1.1vh, 11px) 16px;
+    width: min(560px, 55vw);
+    padding: clamp(8px, 1.4vh, 14px) 18px;
     border-radius: 30px 0 0 30px;
     border: 1px solid #00bfff;
     outline: none;
     background: #111;
     color: #fff;
-    font-size: clamp(0.82rem, 1.5vh, 0.95rem);
+    font-size: clamp(0.9rem, 1.7vh, 1.05rem);
   }
   #goButton {
-    padding: clamp(7px, 1.1vh, 11px) clamp(15px, 1.8vw, 24px);
+    padding: clamp(8px, 1.4vh, 14px) clamp(18px, 2.2vw, 28px);
     border-radius: 0 30px 30px 0;
     border: 1px solid #00bfff;
     background: #00bfff;
     color: #000;
     cursor: pointer;
-    font-size: clamp(0.82rem, 1.5vh, 0.95rem);
+    font-size: clamp(0.9rem, 1.7vh, 1.05rem);
   }
   /* ✅ 全屏入口：站点主按钮，默认就是高亮态（触摸屏没有 hover，不做悬停样式） */
   #fullscreenLink {
     margin-top: 0;
-    padding: clamp(7px, 1.2vh, 13px) clamp(20px, 2.6vw, 38px);
+    padding: clamp(9px, 1.6vh, 16px) clamp(24px, 3.2vw, 48px);
     display: inline-block;
-    font-size: clamp(1.2rem, 3.2vh, 2rem);
+    font-size: clamp(1.4rem, 4vh, 2.4rem);
     font-weight: bold;
     color: #ffd75e;
     background: radial-gradient(circle at 50% 50%, rgba(255, 183, 0, 0.22), rgba(255, 140, 0, 0.06) 70%, rgba(0, 0, 0, 0) 100%);
     border: 2px solid rgba(255, 199, 66, 0.85);
-    border-radius: 16px;
+    border-radius: 18px;
     text-shadow: 0 0 12px #ffbe2e, 0 0 30px #ff9500, 0 0 55px rgba(255, 149, 0, 0.6);
     box-shadow: 0 0 18px rgba(255, 183, 0, 0.35), inset 0 0 26px rgba(255, 183, 0, 0.12);
     cursor: pointer;
@@ -190,9 +190,9 @@
 <p id="fullscreenTip" style="
   color:#ffcc55;
   text-shadow:0 0 8px rgba(255,183,0,0.55);
-  font-size:clamp(0.74rem, 1.5vh, 0.9rem);
+  font-size:clamp(0.8rem, 1.8vh, 1rem);
   text-align:center;
-  margin-top:clamp(5px, 0.9vh, 12px);
+  margin-top:clamp(7px, 1.2vh, 16px);
   line-height:1.5;
 ">
     💡 启用全屏后，只需点击「继续访问」，即可畅享沉浸式浏览。
@@ -209,9 +209,9 @@
 <p id="tipText" style="
   color:#00bfff;
   text-shadow:0 0 8px #00bfff, 0 0 16px #0099cc;
-  font-size:clamp(0.74rem, 1.5vh, 0.9rem);
+  font-size:clamp(0.8rem, 1.8vh, 1rem);
   text-align:center;
-  margin-top:clamp(9px, 1.6vh, 20px);
+  margin-top:clamp(12px, 2.2vh, 28px);
   line-height:1.5;
 ">
     💡 点击「+」号可添加常用网址，系统会自动保存，下次打开仍可使用。<br>
@@ -221,9 +221,9 @@
 <p id="safeNote" style="
   color: #ff3b3b;
   text-shadow: 0 0 8px #ff3b3b;
-  font-size:clamp(0.68rem, 1.2vh, 0.8rem);
+  font-size:clamp(0.7rem, 1.3vh, 0.85rem);
   text-align:center;
-  margin-top:clamp(6px, 1.1vh, 14px);
+  margin-top:clamp(9px, 1.6vh, 18px);
   opacity:0.9;
 ">
   ⚠️ 为确保行车安全，请仅在车辆驻车、且环境安全时使用本站。
@@ -634,10 +634,10 @@ function renderLinks() {
   }
   .neon-ocean {
     position: fixed;
-    bottom: -50px;
+    bottom: -60px;
     left: 0;
     width: 100%;
-    height: 35vh; /* 高度自适应 */
+    height: 22vh; /* 只留底部装饰，别顶到最下面的提示文字 */
     background: transparent;
     overflow: hidden;
     z-index: 0;
