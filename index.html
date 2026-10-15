@@ -176,6 +176,7 @@
 ">
     💡 启用全屏后，只需点击「继续访问」，即可畅享沉浸式浏览。<br>
     💡 点击「+」号可添加常用网址，系统会自动保存，下次打开仍可使用。<br>
+    💡 长按自己添加的网址，可修改名称或删除（默认网址不可删）。<br>
        点击[批量删除]，可快速删除自定义网址。<br>
 
 </p>
@@ -204,6 +205,18 @@
       <button class="save-btn" id="saveBtn">保存</button>
       <button class="delete-btn" id="deleteBtn">删除</button>
       <button class="cancel-btn" id="cancelBtn">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认弹窗 -->
+<div class="modal" id="confirmModal" style="z-index:1000;">
+  <div class="modal-content">
+    <h3>确认删除</h3>
+    <p id="confirmText" style="font-size:0.95rem; line-height:1.6; color:#ccc; margin:10px 0;"></p>
+    <div class="modal-buttons">
+      <button class="delete-btn" id="confirmYes">确定删除</button>
+      <button class="cancel-btn" id="confirmNo">取消</button>
     </div>
   </div>
 </div>
@@ -276,6 +289,31 @@ const defaultLinks = [
 
   let batchDeleteMode = false; // ✅ 是否处于批量删除模式
 
+  // ✅ 通用删除确认弹窗（车机上比浏览器原生 confirm 可靠）
+  const confirmModal = document.getElementById("confirmModal");
+  const confirmText = document.getElementById("confirmText");
+  const confirmYes = document.getElementById("confirmYes");
+  const confirmNo = document.getElementById("confirmNo");
+  let confirmCallback = null;
+
+  function confirmAction(message, onYes) {
+    confirmText.textContent = message;
+    confirmCallback = onYes;
+    confirmModal.style.display = "flex";
+  }
+
+  confirmYes.onclick = () => {
+    confirmModal.style.display = "none";
+    const cb = confirmCallback;
+    confirmCallback = null;
+    if (typeof cb === "function") cb();
+  };
+
+  confirmNo.onclick = () => {
+    confirmModal.style.display = "none";
+    confirmCallback = null;
+  };
+
 function renderLinks() {
   const saved = JSON.parse(localStorage.getItem("customLinks") || "[]");
   const links = [...defaultLinks, ...saved];
@@ -290,12 +328,41 @@ function renderLinks() {
 
     // ✅ 自定义网址（默认网址不显示 ❌）
     if (i >= defaultLinks.length) {
-      // let timer;
-      // a.addEventListener("mousedown", () => {
-      //   timer = setTimeout(() => openModal("edit", i - defaultLinks.length, l), 800);
-      // });
-      // a.addEventListener("mouseup", () => clearTimeout(timer));
-      // a.addEventListener("mouseleave", () => clearTimeout(timer));
+      // ✅ 长按 700ms 编辑（pointer 事件，触屏与鼠标通用；老车机回退 touch/mouse）
+      let pressTimer = null;
+      let longPressed = false;
+      const hasPointer = "onpointerdown" in window;
+      const downEvt = hasPointer ? "pointerdown" : ("ontouchstart" in window ? "touchstart" : "mousedown");
+      const upEvts = hasPointer
+        ? ["pointerup", "pointerleave", "pointercancel"]
+        : ["mouseup", "mouseleave", "touchend", "touchcancel"];
+
+      const startPress = () => {
+        if (batchDeleteMode) return;   // ✅ 批量删除模式下不触发编辑
+        longPressed = false;
+        clearTimeout(pressTimer);
+        pressTimer = setTimeout(() => {
+          longPressed = true;
+          openModal("edit", i - defaultLinks.length, l);
+        }, 700);
+      };
+      const cancelPress = () => clearTimeout(pressTimer);
+
+      a.addEventListener(downEvt, startPress);
+      upEvts.forEach(ev => a.addEventListener(ev, cancelPress));
+      // ✅ 长按触发后，松开那一下不要跳转
+      a.addEventListener("click", (e) => {
+        if (longPressed) {
+          e.preventDefault();
+          e.stopPropagation();
+          longPressed = false;
+        }
+      });
+      // ✅ 触屏长按不要弹出系统菜单/选中文字
+      a.style.webkitUserSelect = "none";
+      a.style.userSelect = "none";
+      a.style.webkitTouchCallout = "none";
+      a.addEventListener("contextmenu", (e) => e.preventDefault());
 
       // ✅ 批量删除模式下添加 ❌ 按钮
       if (batchDeleteMode) {
@@ -320,9 +387,11 @@ function renderLinks() {
         delBtn.addEventListener("click", (e) => {
           e.stopPropagation();   // ✅ 阻止事件冒泡
           e.preventDefault();    // ✅ 阻止跳转链接
-          saved.splice(i - defaultLinks.length, 1);
-          localStorage.setItem("customLinks", JSON.stringify(saved));
-          renderLinks();         // ✅ 重新渲染界面
+          confirmAction(`确定删除「${l.name}」吗？`, () => {
+            saved.splice(i - defaultLinks.length, 1);
+            localStorage.setItem("customLinks", JSON.stringify(saved));
+            renderLinks();         // ✅ 重新渲染界面
+          });
         });
         a.appendChild(delBtn);
       }
@@ -340,7 +409,7 @@ function renderLinks() {
 
   // ✅ 添加批量删除 / 保存按钮
   const deleteToggleBtn = document.createElement("div");
-  deleteToggleBtn.textContent = batchDeleteMode ? "💾 保存" : "🗑 批量删除";
+  deleteToggleBtn.textContent = batchDeleteMode ? "✅ 完成" : "🗑 批量删除";
   deleteToggleBtn.className = "add-btn";
   deleteToggleBtn.style.background = batchDeleteMode
     ? "rgba(0,255,128,0.25)"
@@ -399,10 +468,14 @@ function renderLinks() {
   };
 
   deleteBtn.onclick = () => {
-    const saved = JSON.parse(localStorage.getItem("customLinks") || "[]");
-    saved.splice(editingIndex, 1);
-    localStorage.setItem("customLinks", JSON.stringify(saved));
-    closeModal(); renderLinks();
+    const name = modalName.value.trim() || "这个网址";
+    confirmAction(`确定删除「${name}」吗？`, () => {
+      const saved = JSON.parse(localStorage.getItem("customLinks") || "[]");
+      saved.splice(editingIndex, 1);
+      localStorage.setItem("customLinks", JSON.stringify(saved));
+      closeModal();
+      renderLinks();
+    });
   };
 
   cancelBtn.onclick = closeModal;
