@@ -113,7 +113,7 @@
   }
   /* ✅ 全屏入口：站点主按钮，默认就是高亮态（触摸屏没有 hover，不做悬停样式） */
   #fullscreenLink {
-    margin-top: 40px;
+    margin-top: 0;
     padding: 14px 40px;
     display: inline-block;
     font-size: 2.6rem;
@@ -182,32 +182,39 @@
   </a>
 </div>
 
-<div class="nav-links" id="navLinks"></div>
+<!-- ✅ 顺序：先进入全屏，再点下面的网址 -->
+<a id="fullscreenLink">👉 点击这里进入全屏模式</a>
 
-<div class="url-box">
+<p id="fullscreenTip" style="
+  color:#ffcc55;
+  text-shadow:0 0 8px rgba(255,183,0,0.55);
+  font-size:1rem;
+  text-align:center;
+  margin-top:16px;
+  line-height:1.6;
+">
+    💡 启用全屏后，只需点击「继续访问」，即可畅享沉浸式浏览。
+</p>
+
+<div class="url-box" style="margin-top:26px;">
   <input id="urlInput" type="text"
-         placeholder="先点击下方全屏模式，在此输入任意网址即可保持全屏浏览">
+         placeholder="输入任意网址，再点上面的「进入全屏模式」，直接全屏打开">
   <button id="goButton">进入</button>
 </div>
 
-<a id="fullscreenLink">👉 点击这里进入全屏模式</a>
-
-</div>
+<div class="nav-links" id="navLinks"></div>
 
 <p id="tipText" style="
   color:#00bfff;
   text-shadow:0 0 8px #00bfff, 0 0 16px #0099cc;
   font-size:1rem;
   text-align:center;
-  margin-top:50px;
-
+  margin-top:30px;
   line-height:1.6;
 ">
-    💡 启用全屏后，只需点击「继续访问」，即可畅享沉浸式浏览。<br>
     💡 点击「+」号可添加常用网址，系统会自动保存，下次打开仍可使用。<br>
     💡 长按自己添加的网址，可修改名称或删除（默认网址不可删）。<br>
        点击[批量删除]，可快速删除自定义网址。<br>
-
 </p>
 
 <p id="safeNote" style="
